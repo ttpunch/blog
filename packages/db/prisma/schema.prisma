@@ -8,48 +8,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// CONTENT MODELS
-// ============================================
-
 model Article {
-  id            String    @id @default(cuid())
-  title         String
-  slug          String    @unique
-  excerpt       String?   @db.Text
-  content       String    @db.Text
-  coverImage    String?
-  
-  status        ArticleStatus @default(QUEUED)
-  publishedAt   DateTime?
-  readingTime   Int?
-  viewCount     Int       @default(0)
-  clapsCount    Int       @default(0)
-  
-  // Relations
-  category      Category? @relation(fields: [categoryId], references: [id])
-  categoryId    String?
-  tags          Tag[]
-  comments      Comment[]
-  likes         Like[]
-  claps         Clap[]
-  
-  // AI Generation metadata
-  aiGenerated   Boolean   @default(false)
-  aiProvider    String?   // "ollama" | "openrouter" | "openai"
-  aiModel       String?
-  aiPrompt      String?   @db.Text
-  pipelineState String?   @db.Text // LangGraph state JSON
-  outline       Json?     // Saved outline for HITL
-  
-  // SEO & Monetization
-  seoScore      Int?
-  metaTitle     String?
-  metaDescription String? @db.Text
-  affiliateData Json?
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  excerpt         String?
+  content         String
+  coverImage      String?
+  status          ArticleStatus @default(QUEUED)
+  publishedAt     DateTime?
+  readingTime     Int?
+  viewCount       Int           @default(0)
+  categoryId      String?
+  aiGenerated     Boolean       @default(false)
+  aiProvider      String?
+  aiModel         String?
+  aiPrompt        String?
+  pipelineState   String?
+  seoScore        Int?
+  metaTitle       String?
+  metaDescription String?
+  affiliateData   Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  outline         Json?
+  clapsCount      Int           @default(0)
+  category        Category?     @relation(fields: [categoryId], references: [id])
+  bookmarks       Bookmark[]
+  claps           Clap[]
+  comments        Comment[]
+  likes           Like[]
+  tags            Tag[]         @relation("ArticleToTag")
 
   @@index([status])
   @@index([publishedAt])
@@ -61,33 +50,27 @@ model Category {
   name        String
   slug        String    @unique
   description String?
-  articles    Article[]
-  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  articles    Article[]
 }
 
 model Tag {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  slug     String    @unique
-  articles Article[]
-  
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  articles  Article[] @relation("ArticleToTag")
 }
-
-// ============================================
-// SOCIAL MODELS
-// ============================================
 
 model Like {
   id        String   @id @default(cuid())
   articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ipAddress String?  // For guest likes
+  ipAddress String?
   createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([articleId])
   @@index([userId])
@@ -95,16 +78,16 @@ model Like {
 
 model Comment {
   id        String    @id @default(cuid())
-  content   String    @db.Text
+  content   String
   articleId String
-  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
   userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   parentId  String?
-  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
-  replies   Comment[] @relation("CommentToComment")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentToComment")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([articleId])
   @@index([userId])
@@ -113,13 +96,13 @@ model Comment {
 model Clap {
   id        String   @id @default(cuid())
   articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ipAddress String?  // For guest claps
-  score     Int      @default(1) // Number of claps (1-50)
+  ipAddress String?
+  score     Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([articleId, userId])
   @@unique([articleId, ipAddress])
@@ -127,25 +110,33 @@ model Clap {
   @@index([userId])
 }
 
-// ============================================
-// USER & AUTH (NextAuth compatible)
-// ============================================
+model Bookmark {
+  id        String   @id @default(cuid())
+  articleId String
+  userId    String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
+  @@index([articleId])
+  @@index([userId])
+}
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -159,25 +150,23 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
+  email         String?    @unique
   name          String?
-  email         String?   @unique
+  avatar        String?
+  bio           String?
+  passwordHash  String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   emailVerified DateTime?
   image         String?
-  avatar        String?   // Keep for legacy
-  bio           String?   @db.Text
-  role          UserRole  @default(USER)
-  passwordHash  String?
-  
+  role          UserRole   @default(USER)
   accounts      Account[]
-  sessions      Session[]
-  comments      Comment[]
-
-  likes         Like[]
+  bookmarks     Bookmark[]
   claps         Clap[]
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  comments      Comment[]
+  likes         Like[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -188,10 +177,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ============================================
-// AI CONTENT QUEUE
-// ============================================
-
 model ContentQueue {
   id          String      @id @default(cuid())
   topic       String
@@ -199,11 +184,10 @@ model ContentQueue {
   category    String?
   priority    Int         @default(0)
   status      QueueStatus @default(PENDING)
-  articleId   String?     // Created article reference
-  error       String?     @db.Text
+  articleId   String?
+  error       String?
   scheduledAt DateTime?
   processedAt DateTime?
-  
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -211,67 +195,45 @@ model ContentQueue {
   @@index([scheduledAt])
 }
 
-// ============================================
-// SETTINGS
-// ============================================
-
 model Settings {
-  id              String  @id @default("default")
-  
-  // Default LLM provider
-  defaultProvider String  @default("openai")
-  
-  // Provider configurations (encrypted in production)
+  id              String   @id @default("default")
+  defaultProvider String   @default("openai")
   ollamaEndpoint  String?
   ollamaModel     String?
   openrouterModel String?
-  openaiModel     String  @default("gpt-4o")
-  
-  // Automation settings
-  autoPublish     Boolean @default(false)
-  dailyLimit      Int     @default(3)
-  
-  // Site settings
-  siteName        String  @default("My Blog")
+  openaiModel     String   @default("gpt-4o")
+  autoPublish     Boolean  @default(false)
+  dailyLimit      Int      @default(3)
+  siteName        String   @default("My Blog")
   siteDescription String?
-  
   updatedAt       DateTime @updatedAt
 }
 
-// ============================================
-// MEDIA
-// ============================================
-
 model Media {
-  id          String   @id @default(cuid())
-  filename    String
-  url         String
-  publicId    String   // Cloudinary public_id
-  width       Int?
-  height      Int?
-  format      String?
-  bytes       Int?
-  
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  publicId  String
+  width     Int?
+  height    Int?
+  format    String?
+  bytes     Int?
+  createdAt DateTime @default(now())
 
   @@index([publicId])
 }
 
-// ============================================
-// ENUMS
-// ============================================
-
 enum ArticleStatus {
-  DRAFT
   QUEUED
-  PLANNING
-  AWAITING_APPROVAL
   RESEARCHING
   WRITING
   OPTIMIZING
   REVIEW
   PUBLISHED
   REJECTED
+  DRAFT
+  PLANNING
+  AWAITING_APPROVAL
 }
 
 enum QueueStatus {

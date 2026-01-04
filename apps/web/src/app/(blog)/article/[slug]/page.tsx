@@ -19,6 +19,7 @@ import { FormattedDate } from '@/components/blog/FormattedDate';
 import * as motion from 'framer-motion/client';
 import { LikeButton } from '@/components/blog/LikeButton';
 import { ClapButton } from '@/components/blog/ClapButton';
+import { BookmarkButton } from '@/components/blog/BookmarkButton';
 import { CommentSection } from '@/components/blog/CommentSection';
 
 // Create a server-side caller for metadata
@@ -64,7 +65,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     try {
         article = await client.article.bySlug.query({ slug: params.slug });
     } catch (error) {
-        console.error("Failed to fetch article:", error);
         return (
             <div className="container mx-auto px-4 py-12 text-center">
                 <h1 className="text-2xl font-bold mb-4">Article not found</h1>
@@ -247,6 +247,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                             initialTotalClaps={article.clapsCount}
                             initialUserClaps={clapData.userClaps}
                         />
+                        <BookmarkButton articleId={article.id} />
                     </div>
                     <div className="text-sm text-muted-foreground font-medium">
                         Share your thoughts below

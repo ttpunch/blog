@@ -90,6 +90,7 @@ export default function DashboardLayout({
                 <nav className="space-y-1">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
+
                         return (
                             <Link
                                 key={item.name}

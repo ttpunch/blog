@@ -1,4 +1,4 @@
-import { router } from './trpc';
+import { router } from './trpc'; // force reload
 import { articleRouter } from './routers/article';
 import { categoryRouter, tagRouter } from './routers/category';
 import { settingsRouter } from './routers/settings';
@@ -8,6 +8,7 @@ import { aiRouter } from './routers/ai';
 import { likeRouter } from './routers/like';
 import { commentRouter } from './routers/comment';
 import { clapRouter } from './routers/clap';
+import { bookmarkRouter } from './routers/bookmark';
 
 export const appRouter = router({
     article: articleRouter,
@@ -20,6 +21,7 @@ export const appRouter = router({
     like: likeRouter,
     comment: commentRouter,
     clap: clapRouter,
+    bookmark: bookmarkRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, ListTodo, LayoutDashboard } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
     DropdownMenu,
@@ -19,6 +19,14 @@ export function AuthControls() {
     return (
         <div className="fixed top-4 right-4 z-50 flex gap-2 items-center">
             <ThemeToggle />
+            {session && (
+                <Button variant="outline" size="sm" asChild className="hidden md:flex rounded-full h-10 border-white/20 bg-background/50 backdrop-blur-md px-4 text-muted-foreground hover:text-primary transition-colors">
+                    <Link href="/me/reading-list" className="flex items-center gap-2">
+                        <ListTodo className="w-4 h-4" />
+                        <span className="text-xs font-semibold uppercase tracking-wider">Reading List</span>
+                    </Link>
+                </Button>
+            )}
             {session ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -34,11 +42,23 @@ export function AuthControls() {
                         {(session.user as any).role === 'ADMIN' && (
                             <DropdownMenuItem asChild>
                                 <Link href="/dashboard" className="cursor-pointer">
-                                    <User className="mr-2 h-4 w-4" />
-                                    Dashboard
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                                    Admin Dashboard
                                 </Link>
                             </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem asChild>
+                            <Link href="/me/reading-list" className="cursor-pointer">
+                                <ListTodo className="mr-2 h-4 w-4" />
+                                Reading List
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/dashboard/settings" className="cursor-pointer">
+                                <User className="mr-2 h-4 w-4" />
+                                Profile
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive cursor-pointer">
                             <LogOut className="mr-2 h-4 w-4" />
                             Sign Out
