@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
+import { router, adminProcedure } from '../trpc';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Configure Cloudinary
@@ -11,7 +11,7 @@ cloudinary.config({
 
 export const mediaRouter = router({
     // Generate upload signature
-    getUploadSignature: protectedProcedure.mutation(() => {
+    getUploadSignature: adminProcedure.mutation(() => {
         const timestamp = Math.round(new Date().getTime() / 1000);
         const signature = cloudinary.utils.api_sign_request(
             {
@@ -30,7 +30,7 @@ export const mediaRouter = router({
     }),
 
     // Save media to DB (optional, if we want to track library)
-    save: protectedProcedure
+    save: adminProcedure
         .input(
             z.object({
                 filename: z.string(),

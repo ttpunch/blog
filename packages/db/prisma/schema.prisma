@@ -43,6 +43,7 @@ model Article {
   @@index([status])
   @@index([publishedAt])
   @@index([slug])
+  @@index([categoryId])
 }
 
 model Category {
@@ -91,6 +92,7 @@ model Comment {
 
   @@index([articleId])
   @@index([userId])
+  @@index([parentId])
 }
 
 model Clap {
@@ -167,6 +169,8 @@ model User {
   comments      Comment[]
   likes         Like[]
   sessions      Session[]
+
+  @@index([role])
 }
 
 model VerificationToken {

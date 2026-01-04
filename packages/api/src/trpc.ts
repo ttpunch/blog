@@ -34,4 +34,16 @@ const isAuthed = t.middleware(({ next, ctx }) => {
     });
 });
 
+const isAdmin = t.middleware(({ next, ctx }) => {
+    if (!ctx.session?.user || (ctx.session.user as any).role !== 'ADMIN') {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin role required' });
+    }
+    return next({
+        ctx: {
+            session: { ...ctx.session, user: ctx.session.user },
+        },
+    });
+});
+
 export const protectedProcedure = t.procedure.use(isAuthed);
+export const adminProcedure = t.procedure.use(isAdmin);

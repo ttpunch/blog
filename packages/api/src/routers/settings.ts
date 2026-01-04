@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
+import { router, adminProcedure } from '../trpc';
 
 export const settingsRouter = router({
     // Get settings
-    get: protectedProcedure.query(async ({ ctx }) => {
+    get: adminProcedure.query(async ({ ctx }) => {
         let settings = await ctx.prisma.settings.findUnique({
             where: { id: 'default' },
         });
@@ -19,7 +19,7 @@ export const settingsRouter = router({
     }),
 
     // Update settings
-    update: protectedProcedure
+    update: adminProcedure
         .input(
             z.object({
                 defaultProvider: z.enum(['ollama', 'openrouter', 'openai']).optional(),

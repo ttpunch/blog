@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
+import { router, adminProcedure } from '../trpc';
 import { QueueStatus } from '@blog/db';
 
 export const queueRouter = router({
     // List queue items
-    list: protectedProcedure
+    list: adminProcedure
         .input(
             z.object({
                 status: z.nativeEnum(QueueStatus).optional(),
@@ -18,7 +18,7 @@ export const queueRouter = router({
         }),
 
     // Add topic to queue
-    add: protectedProcedure
+    add: adminProcedure
         .input(
             z.object({
                 topic: z.string().min(1),
@@ -41,7 +41,7 @@ export const queueRouter = router({
         }),
 
     // Bulk add topics
-    bulkAdd: protectedProcedure
+    bulkAdd: adminProcedure
         .input(
             z.object({
                 topics: z.array(z.string()),
@@ -59,7 +59,7 @@ export const queueRouter = router({
         }),
 
     // Update queue item status
-    updateStatus: protectedProcedure
+    updateStatus: adminProcedure
         .input(
             z.object({
                 id: z.string(),
@@ -80,7 +80,7 @@ export const queueRouter = router({
         }),
 
     // Delete queue item
-    delete: protectedProcedure
+    delete: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.contentQueue.delete({
@@ -89,7 +89,7 @@ export const queueRouter = router({
         }),
 
     // Clear completed/failed items
-    clear: protectedProcedure
+    clear: adminProcedure
         .input(
             z.object({
                 status: z.enum(['COMPLETED', 'FAILED']),

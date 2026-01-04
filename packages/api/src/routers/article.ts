@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure, adminProcedure } from '../trpc';
 import { ArticleStatus } from '@prisma/client';
 
 export const articleRouter = router({
@@ -76,7 +76,7 @@ export const articleRouter = router({
         }),
 
     // Get article by ID (protected)
-    getById: protectedProcedure
+    getById: adminProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
             return ctx.prisma.article.findUnique({
@@ -88,20 +88,9 @@ export const articleRouter = router({
             });
         }),
 
-    getBySlug: publicProcedure
-        .input(z.object({ slug: z.string() }))
-        .query(async ({ ctx, input }) => {
-            return ctx.prisma.article.findUnique({
-                where: { slug: input.slug },
-                include: {
-                    category: true,
-                    tags: true,
-                },
-            });
-        }),
 
     // Get articles for review queue (admin)
-    reviewQueue: protectedProcedure.query(async ({ ctx }) => {
+    reviewQueue: adminProcedure.query(async ({ ctx }) => {
         return ctx.prisma.article.findMany({
             where: { status: ArticleStatus.REVIEW },
             include: { category: true, tags: true },
@@ -110,7 +99,7 @@ export const articleRouter = router({
     }),
 
     // Get all articles for admin (any status)
-    adminList: protectedProcedure
+    adminList: adminProcedure
         .input(
             z.object({
                 status: z.enum(['DRAFT', 'QUEUED', 'RESEARCHING', 'WRITING', 'OPTIMIZING', 'REVIEW', 'PUBLISHED', 'REJECTED']).optional(),
@@ -134,7 +123,7 @@ export const articleRouter = router({
         }),
 
     // Create article
-    create: protectedProcedure
+    create: adminProcedure
         .input(
             z.object({
                 title: z.string().min(1),
@@ -172,7 +161,7 @@ export const articleRouter = router({
         }),
 
     // Update article
-    update: protectedProcedure
+    update: adminProcedure
         .input(
             z.object({
                 id: z.string(),
@@ -220,7 +209,7 @@ export const articleRouter = router({
         }),
 
     // Delete article
-    delete: protectedProcedure
+    delete: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.article.delete({
@@ -229,7 +218,7 @@ export const articleRouter = router({
         }),
 
     // Approve article (move to published)
-    approve: protectedProcedure
+    approve: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.article.update({
@@ -242,7 +231,7 @@ export const articleRouter = router({
         }),
 
     // Reject article
-    reject: protectedProcedure
+    reject: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.article.update({

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, adminProcedure } from '../trpc';
 
 export const categoryRouter = router({
     // List all categories
@@ -25,7 +25,7 @@ export const categoryRouter = router({
         }),
 
     // Create category
-    create: protectedProcedure
+    create: adminProcedure
         .input(
             z.object({
                 name: z.string().min(1),
@@ -38,7 +38,7 @@ export const categoryRouter = router({
         }),
 
     // Update category
-    update: protectedProcedure
+    update: adminProcedure
         .input(
             z.object({
                 id: z.string(),
@@ -53,7 +53,7 @@ export const categoryRouter = router({
         }),
 
     // Delete category
-    delete: protectedProcedure
+    delete: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.category.delete({ where: { id: input.id } });
@@ -72,7 +72,7 @@ export const tagRouter = router({
     }),
 
     // Create tag
-    create: protectedProcedure
+    create: adminProcedure
         .input(
             z.object({
                 name: z.string().min(1),
@@ -84,7 +84,7 @@ export const tagRouter = router({
         }),
 
     // Delete tag
-    delete: protectedProcedure
+    delete: adminProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.tag.delete({ where: { id: input.id } });

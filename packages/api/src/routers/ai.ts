@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
+import { router, adminProcedure, protectedProcedure } from '../trpc';
 import { ContentPipeline } from '@blog/ai';
 
 export const aiRouter = router({
-    generateArticle: protectedProcedure
+    generateArticle: adminProcedure
         .input(z.object({
             topic: z.string(),
             provider: z.enum(['openai', 'ollama', 'openrouter']).optional().default('openai'),
@@ -120,7 +120,7 @@ export const aiRouter = router({
             return { id: article.id };
         }),
 
-    generateOutline: protectedProcedure
+    generateOutline: adminProcedure
         .input(z.object({
             topic: z.string(),
             provider: z.enum(['openai', 'ollama', 'openrouter']).optional().default('openai'),
@@ -225,7 +225,7 @@ export const aiRouter = router({
             return { id: article.id };
         }),
 
-    approveOutline: protectedProcedure
+    approveOutline: adminProcedure
         .input(z.object({
             articleId: z.string(),
             editedOutline: z.any().optional(), // Allow any JSON for the outline
