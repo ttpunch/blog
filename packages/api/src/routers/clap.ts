@@ -52,18 +52,34 @@ export const clapRouter = router({
                 if (existing) {
                     // Increment, capping at 50
                     const newScore = Math.min(existing.score + amount, 50);
-                    return ctx.prisma.clap.update({
+                    const addedScore = newScore - existing.score;
+
+                    const clap = await ctx.prisma.clap.update({
                         where: { id: existing.id },
                         data: { score: newScore }
                     });
+
+                    if (addedScore > 0) {
+                        await (ctx.prisma.article as any).update({
+                            where: { id: articleId },
+                            data: { clapsCount: { increment: addedScore } }
+                        });
+                    }
+                    return clap;
                 } else {
-                    return ctx.prisma.clap.create({
+                    const clap = await ctx.prisma.clap.create({
                         data: {
                             articleId,
                             userId,
                             score: Math.min(amount, 50)
                         }
                     });
+
+                    await (ctx.prisma.article as any).update({
+                        where: { id: articleId },
+                        data: { clapsCount: { increment: clap.score } }
+                    });
+                    return clap;
                 }
             } else {
                 // Guest User
@@ -81,18 +97,34 @@ export const clapRouter = router({
 
                 if (existing) {
                     const newScore = Math.min(existing.score + amount, 50);
-                    return ctx.prisma.clap.update({
+                    const addedScore = newScore - existing.score;
+
+                    const clap = await ctx.prisma.clap.update({
                         where: { id: existing.id },
                         data: { score: newScore }
                     });
+
+                    if (addedScore > 0) {
+                        await (ctx.prisma.article as any).update({
+                            where: { id: articleId },
+                            data: { clapsCount: { increment: addedScore } }
+                        });
+                    }
+                    return clap;
                 } else {
-                    return ctx.prisma.clap.create({
+                    const clap = await ctx.prisma.clap.create({
                         data: {
                             articleId,
                             ipAddress,
                             score: Math.min(amount, 50)
                         }
                     });
+
+                    await (ctx.prisma.article as any).update({
+                        where: { id: articleId },
+                        data: { clapsCount: { increment: clap.score } }
+                    });
+                    return clap;
                 }
             }
         }),
@@ -109,9 +141,9 @@ export const clapRouter = router({
                 if (forwarded) ipAddress = forwarded.split(',')[0];
             }
 
-            const totalAgg = await ctx.prisma.clap.aggregate({
-                where: { articleId },
-                _sum: { score: true }
+            const article = await (ctx.prisma.article as any).findUnique({
+                where: { id: articleId },
+                select: { clapsCount: true }
             });
 
             let userScore = 0;
@@ -129,7 +161,7 @@ export const clapRouter = router({
             }
 
             return {
-                totalClaps: totalAgg._sum.score || 0,
+                totalClaps: article?.clapsCount || 0,
                 userClaps: userScore
             };
         }),

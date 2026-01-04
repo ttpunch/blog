@@ -44,9 +44,22 @@ export default function ArticlesPage() {
         status: statusFilter === 'ALL' ? undefined : (statusFilter as any)
     });
 
+    const utils = trpc.useContext();
+    const deleteMutation = trpc.article.delete.useMutation({
+        onSuccess: () => {
+            utils.article.adminList.invalidate();
+        },
+    });
+
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure? This cannot be undone.')) return;
-        // TODO: Implement delete mutation call
+        if (!confirm('Are you sure you want to delete this article? This action cannot be undone.')) return;
+
+        try {
+            await deleteMutation.mutateAsync({ id });
+        } catch (error) {
+            console.error('Failed to delete article:', error);
+            alert('Failed to delete article. Please try again.');
+        }
     };
 
     const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" | null | undefined => {
@@ -181,9 +194,10 @@ export default function ArticlesPage() {
                                                     <DropdownMenuItem
                                                         onClick={() => handleDelete(article.id)}
                                                         className="text-destructive focus:text-destructive"
+                                                        disabled={deleteMutation.isLoading}
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4" />
-                                                        Delete
+                                                        {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>

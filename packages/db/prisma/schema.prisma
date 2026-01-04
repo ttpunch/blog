@@ -24,6 +24,7 @@ model Article {
   publishedAt   DateTime?
   readingTime   Int?
   viewCount     Int       @default(0)
+  clapsCount    Int       @default(0)
   
   // Relations
   category      Category? @relation(fields: [categoryId], references: [id])

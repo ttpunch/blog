@@ -125,7 +125,7 @@ export default function HomePage() {
                                                             <path d="M11 20.3546L5.70711 15.0617C5.31658 14.6712 5.31658 14.038 5.70711 13.6475L12.5519 6.80277C12.893 6.46162 12.893 5.9085 12.5519 5.56735C12.2107 5.22621 11.6576 5.22621 11.3164 5.56735L6.64645 10.2374M13.5 17.8546L18.7929 12.5617C19.1834 12.1712 19.1834 11.538 18.7929 11.1475L11.9481 4.30277C11.6069 3.96162 11.6069 3.4085 11.9481 3.06735C12.2893 2.72621 12.8424 2.72621 13.1835 3.06735L17.8536 7.7374" />
                                                         </svg>
                                                     </div>
-                                                    <span className="text-sm font-bold tabular-nums">{(article as any)._count?.claps || 0}</span>
+                                                    <span className="text-sm font-bold tabular-nums">{article.clapsCount || 0}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 text-muted-foreground group/stat">
                                                     <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center transition-colors group-hover/stat:bg-red-500/10 group-hover/stat:text-red-500">

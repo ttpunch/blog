@@ -244,7 +244,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                         <LikeButton articleId={article.id} />
                         <ClapButton
                             articleId={article.id}
-                            initialTotalClaps={clapData.totalClaps}
+                            initialTotalClaps={article.clapsCount}
                             initialUserClaps={clapData.userClaps}
                         />
                     </div>

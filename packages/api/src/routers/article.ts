@@ -29,7 +29,6 @@ export const articleRouter = router({
                         select: {
                             likes: true,
                             comments: true,
-                            claps: true,
                         },
                     },
                 },
@@ -58,7 +57,6 @@ export const articleRouter = router({
                         select: {
                             likes: true,
                             comments: true,
-                            claps: true,
                         },
                     },
                 },
@@ -128,7 +126,6 @@ export const articleRouter = router({
                         select: {
                             likes: true,
                             comments: true,
-                            claps: true,
                         },
                     },
                 },

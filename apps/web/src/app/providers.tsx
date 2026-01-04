@@ -13,7 +13,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: process.env.NEXTAUTH_URL ? `${process.env.NEXTAUTH_URL}/api/trpc` : 'http://localhost:3000/api/trpc',
+                    url: '/api/trpc',
                 }),
             ],
             transformer: superjson,
