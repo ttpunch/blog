@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',
     transpilePackages: ['@blog/api', '@blog/db', '@blog/ai'],
     images: {
         domains: ['res.cloudinary.com'],
