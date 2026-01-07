@@ -1,5 +1,5 @@
 
-import { PrismaClient } from './generated/client';
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined;
@@ -16,5 +16,5 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Re-export all types and enums from Prisma Client
-export * from './generated/client';
-export { ArticleStatus, QueueStatus, UserRole } from './generated/client';
+export * from '@prisma/client';
+export { ArticleStatus, QueueStatus, UserRole } from '@prisma/client';

@@ -4,6 +4,9 @@ const nextConfig = {
     images: {
         domains: ['res.cloudinary.com'],
     },
+    experimental: {
+        outputFileTracingRoot: require('path').join(__dirname, '../../'),
+    },
 };
 
 module.exports = nextConfig;
