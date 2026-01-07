@@ -4,6 +4,7 @@ import EmailProvider from 'next-auth/providers/email';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@blog/db';
+import bcrypt from 'bcryptjs';
 
 export const authOptions: NextAuthOptions = {
     debug: true,
@@ -36,8 +37,8 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
-                // TODO: Add proper password hashing with bcrypt
-                if (credentials.password !== user.passwordHash) {
+                const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+                if (!isValid) {
                     return null;
                 }
 

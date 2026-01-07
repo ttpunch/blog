@@ -32,3 +32,28 @@ Copy `.env.example` to `.env` and fill in:
 - `NEXTAUTH_SECRET` - Random secret for auth
 - `CLOUDINARY_*` - Cloudinary credentials
 - LLM API keys (OpenAI, OpenRouter, Ollama)
+
+## Deployment
+
+To deploy the application to production:
+
+1.  **Secure Authentication**: Ensure you have generated a secure `NEXTAUTH_SECRET`.
+2.  **Database Migration**: Run database migrations to set up the production schema.
+    ```bash
+    pnpm db:push
+    ```
+3.  **Seed Admin User**: Create the initial admin user with a hashed password.
+    ```bash
+    pnpm --filter @blog/db seed
+    ```
+4.  **Build**: Create an optimized production build.
+    ```bash
+    pnpm build
+    ```
+5.  **Start**: Run the production server.
+    ```bash
+    pnpm start
+    ```
+
+> [!IMPORTANT]
+> Always use a secure password for the admin user. The project now uses `bcryptjs` for secure password storage.

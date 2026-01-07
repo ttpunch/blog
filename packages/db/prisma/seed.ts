@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -8,13 +9,16 @@ async function main() {
     const adminEmail = 'admin@example.com';
     const adminPassword = 'password';
 
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
     const user = await prisma.user.upsert({
         where: { email: adminEmail },
-        update: {},
+        update: {
+            passwordHash: hashedPassword,
+        },
         create: {
             email: adminEmail,
             name: 'Admin User',
-            passwordHash: adminPassword, // Note: currently using plaintext as per auth.ts implementation
+            passwordHash: hashedPassword,
             bio: 'System Administrator',
         },
     });
