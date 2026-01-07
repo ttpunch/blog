@@ -15,5 +15,6 @@ if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = prisma;
 }
 
-// Re-export all types from Prisma Client
+// Re-export all types and enums from Prisma Client
 export * from '@prisma/client';
+export { ArticleStatus, QueueStatus, UserRole } from '@prisma/client';
