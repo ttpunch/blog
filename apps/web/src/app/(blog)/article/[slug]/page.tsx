@@ -15,6 +15,8 @@ import 'highlight.js/styles/github-dark.css';
 import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { FuturisticBackground } from '@/components/ui/futuristic-background';
 
+export const dynamic = 'force-dynamic';
+
 import { FormattedDate } from '@/components/blog/FormattedDate';
 import * as motion from 'framer-motion/client';
 import { LikeButton } from '@/components/blog/LikeButton';
