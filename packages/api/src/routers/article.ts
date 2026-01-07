@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure, protectedProcedure, adminProcedure } from '../trpc';
-import { ArticleStatus } from '@prisma/client';
+import { ArticleStatus } from '@blog/db';
 
 export const articleRouter = router({
     // Get all published articles (public)
