@@ -24,8 +24,8 @@ export class ResearchAgent {
     async performResearch(topic: string) {
         try {
             const prompt = ChatPromptTemplate.fromMessages([
-                ["system", "You are a deep-dive research assistant. Your goal is to gather facts, context, and a suggested structure for a blog post on a given topic. Be thorough and provide high-quality data that a writer can use."],
-                ["user", "Topic: {topic}. Conduct deep research and provide structured context."],
+                ["system", "You are a deep-dive research assistant. Your goal is to gather facts, context, and a suggested structure for a blog post on a given topic. You MUST provide substantial data. Do not return empty fields or generic content. If the topic is technical, provide technical details and current trends."],
+                ["user", "Topic: {topic}. Conduct deep research and provide comprehensive, high-quality structured context. Ensure 'keyFacts' contains at least 5 significant points and 'context' is at least 3 paragraphs long."],
             ]);
 
             const chain = prompt.pipe(this.researchModel);

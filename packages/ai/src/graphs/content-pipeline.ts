@@ -175,9 +175,20 @@ export class ContentPipeline {
 
         const list = await this.graph.stream(inputState as any);
         let finalState = inputState;
+        let skipUntilReached = options?.resumeFrom ? true : false;
 
         for await (const chunk of list) {
             const nodeName = Object.keys(chunk)[0];
+
+            if (skipUntilReached) {
+                if (nodeName === options?.resumeFrom) {
+                    skipUntilReached = false;
+                } else {
+                    console.log(`[ContentPipeline] Skipping node: ${nodeName}`);
+                    continue;
+                }
+            }
+
             const nodeState = chunk[nodeName];
             finalState = { ...finalState, ...nodeState };
 

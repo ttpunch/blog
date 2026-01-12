@@ -14,12 +14,14 @@ async function main() {
         where: { email: adminEmail },
         update: {
             passwordHash: hashedPassword,
+            role: 'ADMIN',
         },
         create: {
             email: adminEmail,
             name: 'Admin User',
             passwordHash: hashedPassword,
             bio: 'System Administrator',
+            role: 'ADMIN',
         },
     });
 
