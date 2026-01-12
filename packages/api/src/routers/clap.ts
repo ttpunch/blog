@@ -10,7 +10,19 @@ export const clapRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             const { articleId, amount } = input;
-            const userId = (ctx.session?.user as any)?.id;
+            let userId = (ctx.session?.user as any)?.id; // Use let so we can reset it if user not found
+
+            // Verify user exists to prevent Foreign Key violation
+            if (userId) {
+                const userExists = await ctx.prisma.user.findUnique({
+                    where: { id: userId },
+                    select: { id: true }
+                });
+                if (!userExists) {
+                    console.warn(`User ${userId} from session not found in DB. Falling back to guest mode.`);
+                    userId = null;
+                }
+            }
 
             // Basic IP tracking for guests
             // Note: In Next.js App Router with TRPC, getting IP can be tricky. 

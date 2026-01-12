@@ -7,7 +7,18 @@ export const likeRouter = router({
             articleId: z.string(),
         }))
         .mutation(async ({ ctx, input }) => {
-            const userId = (ctx.session?.user as any)?.id;
+            let userId = (ctx.session?.user as any)?.id;
+
+            // Verify user exists to prevent FK violation
+            if (userId) {
+                const userExists = await ctx.prisma.user.findUnique({
+                    where: { id: userId },
+                    select: { id: true }
+                });
+                if (!userExists) {
+                    userId = null;
+                }
+            }
             const ipAddress = ctx.req?.headers['x-forwarded-for'] || ctx.req?.socket?.remoteAddress;
 
             if (userId) {

@@ -65,7 +65,7 @@ export default function HomePage() {
                         transition={{ delay: 0.1 }}
                         className="text-5xl md:text-8xl font-black tracking-tighter text-foreground leading-[0.9] text-balance"
                     >
-                        Exploring the <span className="text-primary italic">Future</span> of AI.
+                        Exploring the <span className="text-primary italic">Future</span> with AI.
                     </motion.h1>
 
                     <motion.p
@@ -74,7 +74,7 @@ export default function HomePage() {
                         transition={{ delay: 0.2 }}
                         className="text-muted-foreground text-lg md:text-2xl max-w-3xl mx-auto font-medium"
                     >
-                        Deep dives into artificial intelligence, tech evolution, and the new economy.
+                        Emerging Trends Across AI and Modern Technology.
                     </motion.p>
                 </header>
 
@@ -87,7 +87,7 @@ export default function HomePage() {
                     {articles?.items.map((article) => (
                         <motion.div key={article.id} variants={item}>
                             <Link href={`/article/${article.slug}`}>
-                                <Card className="group h-full overflow-hidden border-white/5 transition-all hover:shadow-[0_0_40px_rgba(var(--primary),0.15)] hover:border-primary/30 bg-card/30 backdrop-blur-xl relative flex flex-col rounded-[2rem]">
+                                <Card className="group h-full overflow-hidden border-white/10 transition-all hover:shadow-[0_0_50px_rgba(var(--primary),0.3)] hover:border-primary/40 bg-card/40 backdrop-blur-xl relative flex flex-col rounded-[2rem] shadow-2xl shadow-black/50">
                                     {article.coverImage && (
                                         <div className="relative aspect-[16/10] overflow-hidden">
                                             <img

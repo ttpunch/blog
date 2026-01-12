@@ -29,6 +29,7 @@ const client = createTRPCProxyClient<AppRouter>({
     links: [
         httpBatchLink({
             url: process.env.NEXTAUTH_URL ? `${process.env.NEXTAUTH_URL}/api/trpc` : 'http://localhost:3000/api/trpc',
+            fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
         }),
     ],
     transformer: superjson,
@@ -83,9 +84,11 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
     try {
         clapData = await client.clap.byArticle.query({ articleId: article.id });
+        console.log(`[ArticlePage] Claps for ${article.slug}: Article=${article.clapsCount}, ClapData=${clapData.totalClaps}`);
     } catch (e) {
         console.error("Failed to fetch claps", e);
-        clapData = { totalClaps: 0, userClaps: 0 };
+        console.log(`[ArticlePage] Error fetching claps for ${article.slug}. Article count from DB: ${article.clapsCount}`);
+        clapData = { totalClaps: article.clapsCount || 0, userClaps: 0 };
     }
 
     return (
@@ -246,7 +249,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                         <LikeButton articleId={article.id} />
                         <ClapButton
                             articleId={article.id}
-                            initialTotalClaps={article.clapsCount}
+                            initialTotalClaps={clapData.totalClaps}
                             initialUserClaps={clapData.userClaps}
                         />
                         <BookmarkButton articleId={article.id} />
