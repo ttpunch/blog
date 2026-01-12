@@ -19,7 +19,7 @@ function CarouselItem({ article, index, total, radius, rotation }: { article: an
     // Calculate scale and opacity based on Z position (depth)
     const depth = (z + radius) / (2 * radius); // 0 (back) to 1 (front)
     const scale = 0.5 + depth * 0.4; // Scaled down to max 0.9 per user request to prevent clipping
-    const opacity = 0.2 + depth * 0.8;
+    const opacity = 0.1 + depth * 0.9; // Opacity from 0.1 (back) to 1.0 (front)
 
     return (
         <group position={[x, 0, z]}>
@@ -173,7 +173,7 @@ export function ThreeDCarousel({ articles }: ThreeDCarouselProps) {
     return (
         <div
             ref={containerRef}
-            className="w-full h-[850px] cursor-grab active:cursor-grabbing relative z-20"
+            className="w-full h-[1000px] cursor-grab active:cursor-grabbing relative z-20"
         >
             <Canvas
                 camera={{ position: [0, 0, 24], fov: 50 }}
@@ -186,11 +186,11 @@ export function ThreeDCarousel({ articles }: ThreeDCarouselProps) {
             </Canvas>
 
             {/* Legend/Hint */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 pointer-events-none">
+            <div className="absolute  left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 pointer-events-none">
                 <svg className="w-3 h-3 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                 </svg>
-                Drag or use scroll wheel to rotate
+                Use scroll wheel to rotate
             </div>
         </div>
     );

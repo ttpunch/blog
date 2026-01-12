@@ -75,7 +75,7 @@ export default function HomePage() {
                 </header>
 
                 {/* 3D Carousel (Desktop) / Grid (Mobile) */}
-                <div className="relative min-h-[850px]">
+                <div className="relative min-h-[960px]">
                     <div className="hidden lg:block mt-12">
                         <ThreeDCarousel articles={articles?.items || []} />
                     </div>
