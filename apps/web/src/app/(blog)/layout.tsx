@@ -1,4 +1,6 @@
 import { Metadata } from 'next';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
     title: {
@@ -17,17 +19,18 @@ export const metadata: Metadata = {
     },
 };
 
-import { AuthControls } from '../../components/blog/auth-controls';
-
 export default function BlogLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     return (
-        <>
-            <AuthControls />
-            {children}
-        </>
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1 relative">
+                {children}
+            </main>
+            <Footer />
+        </div>
     );
 }

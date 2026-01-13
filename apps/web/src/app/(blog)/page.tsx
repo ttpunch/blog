@@ -1,7 +1,7 @@
 'use client';
 
 import { trpc } from '@/lib/trpc';
-import { ThreeDCarousel } from '@/components/ThreeDCarousel';
+import { InfiniteCarousel } from '@/components/InfiniteCarousel';
 import { ArticleCard } from '@/components/ArticleCard';
 import { motion } from 'framer-motion';
 import { Sparkles } from "lucide-react";
@@ -41,11 +41,11 @@ export default function HomePage() {
     }
 
     return (
-        <main className="relative min-h-screen pb-24 overflow-x-hidden">
+        <main className="relative flex flex-col min-h-[calc(100vh-64px)] overflow-x-hidden">
             <FuturisticBackground />
 
-            <div className="container mx-auto px-4 pt-20 pb-16 relative z-10">
-                <header className="mb-12 text-center space-y-6">
+            <div className="container mx-auto px-4 pt-12 pb-4 relative z-10">
+                <header className="mb-4 text-center space-y-6">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -74,10 +74,9 @@ export default function HomePage() {
                     </motion.p>
                 </header>
 
-                {/* 3D Carousel (Desktop) / Grid (Mobile) */}
-                <div className="relative min-h-[960px]">
-                    <div className="hidden lg:block mt-12">
-                        <ThreeDCarousel articles={articles?.items || []} />
+                <div className="flex-1 flex flex-col justify-end relative min-h-[600px] gap-8">
+                    <div className="hidden lg:block">
+                        <InfiniteCarousel articles={articles?.items || []} />
                     </div>
 
                     <motion.div
@@ -95,20 +94,20 @@ export default function HomePage() {
                             </motion.div>
                         ))}
                     </motion.div>
-                </div>
 
-                {articles?.items.length === 0 && !isLoading && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center py-32 bg-card/20 backdrop-blur-md rounded-[3rem] border border-dashed border-white/10"
-                    >
-                        <p className="text-muted-foreground text-xl font-medium">
-                            The collective is currently processing new data.
-                        </p>
-                        <p className="text-muted-foreground/50 text-sm mt-2">Check back in a cycle.</p>
-                    </motion.div>
-                )}
+                    {articles?.items.length === 0 && !isLoading && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center py-32 bg-card/20 backdrop-blur-md rounded-[3rem] border border-dashed border-white/10"
+                        >
+                            <p className="text-muted-foreground text-xl font-medium">
+                                The collective is currently processing new data.
+                            </p>
+                            <p className="text-muted-foreground/50 text-sm mt-2">Check back in a cycle.</p>
+                        </motion.div>
+                    )}
+                </div>
             </div>
         </main>
     );

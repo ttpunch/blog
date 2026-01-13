@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
 import { Html, useCursor } from '@react-three/drei';
 import * as THREE from 'three';
 import { ArticleCard } from './ArticleCard';
@@ -54,7 +54,7 @@ function Scene({ articles, rotationVelocity }: { articles: any[], rotationVeloci
     const [rotation, setRotation] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const lastMouseX = useRef(0);
-    const radius = 8; // Adjusted to 8 per user request
+    const radius = 8; // Increased for more space between cards and larger view
 
     useFrame(() => {
         if (!isDragging) {
@@ -106,12 +106,12 @@ function Scene({ articles, rotationVelocity }: { articles: any[], rotationVeloci
         }
     });
 
-    const handlePointerDown = (e: React.PointerEvent) => {
+    const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
         setIsDragging(true);
         lastMouseX.current = e.clientX;
     };
 
-    const handlePointerMove = (e: React.PointerEvent) => {
+    const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
         if (isDragging) {
             const deltaX = e.clientX - lastMouseX.current;
             const moveSpeed = 0.005;
@@ -138,7 +138,7 @@ function Scene({ articles, rotationVelocity }: { articles: any[], rotationVeloci
                     article={article}
                     index={index}
                     total={articles.length}
-                    radius={radius}
+                    radius={9}
                     rotation={rotation}
                 />
             ))}
@@ -173,10 +173,10 @@ export function ThreeDCarousel({ articles }: ThreeDCarouselProps) {
     return (
         <div
             ref={containerRef}
-            className="w-full h-[1000px] cursor-grab active:cursor-grabbing relative z-20"
+            className="w-full h-[600px] cursor-grab active:cursor-grabbing relative z-20 overflow-visible"
         >
             <Canvas
-                camera={{ position: [0, 0, 24], fov: 50 }}
+                camera={{ position: [0, 0, 18], fov: 50 }}
                 gl={{ antialias: true, alpha: true }}
                 dpr={[1, 2]}
             >
@@ -186,7 +186,7 @@ export function ThreeDCarousel({ articles }: ThreeDCarouselProps) {
             </Canvas>
 
             {/* Legend/Hint */}
-            <div className="absolute  left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 pointer-events-none">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 pointer-events-none">
                 <svg className="w-3 h-3 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                 </svg>
