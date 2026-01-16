@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export function Footer() {
     return (
         <footer className="border-t border-white/10 bg-black/20 backdrop-blur-md mt-auto">
@@ -7,12 +9,12 @@ export function Footer() {
                         © {new Date().getFullYear()} AI Blog Platform. All rights reserved.
                     </div>
                     <div className="flex items-center gap-6">
-                        <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                        <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             Privacy Policy
-                        </a>
-                        <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                        </Link>
+                        <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             Terms of Service
-                        </a>
+                        </Link>
                         <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             Twitter
                         </a>

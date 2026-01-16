@@ -20,7 +20,7 @@ export function Header() {
     const pathname = usePathname();
 
     const navLinks = [
-        { href: '/', label: 'Explore' },
+        { href: '/explore', label: 'Explore' },
         { href: '/about', label: 'About' },
     ];
 
@@ -77,7 +77,11 @@ export function Header() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
-                                <div className="flex items-center justify-start gap-2 p-2">
+                                <div className="flex items-center justify-start gap-3 p-2">
+                                    <Avatar className="h-8 w-8 border border-white/10">
+                                        <AvatarImage src={session.user?.image || ''} alt={session.user?.name || ''} />
+                                        <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                                    </Avatar>
                                     <div className="flex flex-col space-y-1 leading-none">
                                         {session.user?.name && (
                                             <p className="font-medium">{session.user.name}</p>
