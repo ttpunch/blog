@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Loader2, Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,10 +44,19 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-            <div className="flex items-center justify-center py-12">
-                <div className="mx-auto grid w-[350px] gap-6">
-                    <div className="grid gap-2 text-center">
+        <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
+            <Image
+                src="/login-bg.png"
+                alt="Background"
+                fill
+                className="absolute inset-0 object-cover z-0"
+                priority
+            />
+            <div className="absolute inset-0 bg-black/40 z-0" /> {/* Dark overlay for better text contrast */}
+
+            <div className="relative z-10 w-full max-w-[400px] p-4">
+                <div className="mx-auto w-full gap-6 bg-background/95 backdrop-blur-xl p-8 rounded-xl shadow-2xl border border-white/10 dark:border-white/5">
+                    <div className="grid gap-2 text-center mb-6">
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
                             Welcome Back
                         </h1>
@@ -56,7 +66,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="grid gap-4">
-                        <Button variant="outline" className="w-full relative" onClick={handleGoogleSignIn} disabled={googleLoading || loading}>
+                        <Button variant="outline" className="w-full relative py-5" onClick={handleGoogleSignIn} disabled={googleLoading || loading}>
                             {googleLoading ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
@@ -87,7 +97,7 @@ export default function LoginPage() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="pl-9"
+                                        className="pl-9 bg-background/50"
                                     />
                                     <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -109,7 +119,7 @@ export default function LoginPage() {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="pl-9"
+                                        className="pl-9 bg-background/50"
                                     />
                                     <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -119,7 +129,7 @@ export default function LoginPage() {
                                     {error}
                                 </div>
                             )}
-                            <Button type="submit" className="w-full" disabled={loading || googleLoading}>
+                            <Button type="submit" className="w-full py-5 text-base" disabled={loading || googleLoading}>
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -131,25 +141,12 @@ export default function LoginPage() {
                             </Button>
                         </form>
                     </div>
-                    <div className="mt-4 text-center text-sm">
+                    <div className="mt-6 text-center text-sm">
                         Don&apos;t have an account?{" "}
                         <Link href="/signup" className="underline text-primary hover:text-primary/80">
                             Sign up
                         </Link>
                     </div>
-                </div>
-            </div>
-            <div className="hidden bg-muted lg:block relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/80 to-background opacity-90" />
-                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20" />
-                <div className="relative z-10 flex flex-col justify-center items-center h-full text-white p-10 text-center">
-                    <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center mb-8 shadow-2xl border border-white/20">
-                        <div className="w-12 h-12 bg-white rounded-lg" />
-                    </div>
-                    <h2 className="text-4xl font-bold mb-4 tracking-tight">AI-Powered Content</h2>
-                    <p className="text-lg text-white/80 max-w-md leading-relaxed">
-                        Manage your blog, analyze engagement, and scale your content creation with our advanced platform.
-                    </p>
                 </div>
             </div>
         </div>
