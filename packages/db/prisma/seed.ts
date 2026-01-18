@@ -45,6 +45,55 @@ async function main() {
         });
     }
     console.log(`✅ Default categories created.`);
+
+    // Seed Articles
+    console.log('   Seeding articles...');
+
+    const adminUser = await prisma.user.findUnique({ where: { email: adminEmail } });
+    const techCategory = await prisma.category.findUnique({ where: { slug: 'technology' } });
+    const aiCategory = await prisma.category.findUnique({ where: { slug: 'ai-future' } });
+
+    if (adminUser && techCategory && aiCategory) {
+        const articles = [
+            {
+                title: 'The Future of AI in Web Development',
+                slug: 'future-ai-web-development',
+                excerpt: 'How Artificial Intelligence is reshaping the way we build the web.',
+                content: 'Artificial Intelligence is revolutionizing web development...',
+                status: 'PUBLISHED' as const,
+                categoryId: techCategory.id,
+                authorId: adminUser.id,
+                viewCount: 150,
+                readingTime: 5,
+                publishedAt: new Date(),
+            },
+            {
+                title: 'Understanding Neural Networks',
+                slug: 'understanding-neural-networks',
+                excerpt: 'A deep dive into the architecture of modern AI systems.',
+                content: 'Neural networks are the backbone of deep learning...',
+                status: 'PUBLISHED' as const,
+                categoryId: aiCategory.id,
+                authorId: adminUser.id,
+                viewCount: 320,
+                readingTime: 8,
+                publishedAt: new Date(),
+            }
+        ];
+
+        for (const article of articles) {
+            const { categoryId, authorId, ...rest } = article;
+            await prisma.article.upsert({
+                where: { slug: article.slug },
+                update: {},
+                create: {
+                    ...rest,
+                    category: { connect: { id: categoryId } },
+                },
+            });
+        }
+        console.log(`✅ Sample articles created.`);
+    }
 }
 
 main()

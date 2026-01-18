@@ -29,3 +29,4 @@ npm-debug.log*
 # Prisma
 packages/db/prisma/*.db
 packages/db/prisma/*.db-journal
+.vercel
