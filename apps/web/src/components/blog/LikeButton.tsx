@@ -6,12 +6,16 @@ import { Heart } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface LikeButtonProps {
     articleId: string;
 }
 
 export function LikeButton({ articleId }: LikeButtonProps) {
+    const { data: session } = useSession();
+    const router = useRouter();
     const utils = trpc.useContext();
     const { data: status, isLoading } = trpc.like.status.useQuery({ articleId });
     const likeMutation = trpc.like.toggle.useMutation({
@@ -41,6 +45,11 @@ export function LikeButton({ articleId }: LikeButtonProps) {
     });
 
     const handleToggle = () => {
+        if (!session) {
+            toast.error('Please log in to like this article');
+            router.push('/login');
+            return;
+        }
         likeMutation.mutate({ articleId });
     };
 

@@ -20,6 +20,7 @@ import {
     MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -53,6 +54,15 @@ export default function DashboardLayout({
     const router = useRouter();
     const pathname = usePathname();
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
+    const isAdmin = status === 'authenticated' && (session?.user as any)?.role === 'ADMIN';
+    const { data: reviewItems } = trpc.article.reviewQueue.useQuery(undefined, {
+        enabled: isAdmin,
+        refetchInterval: 30000,
+    });
+    const reviewCount = reviewItems?.length ?? 0;
+
+    const userInitials = (session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || 'U').toUpperCase();
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -191,15 +201,26 @@ export default function DashboardLayout({
                         <span className="capitalize">{pathname.split('/').pop() || 'Overview'}</span>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" className="relative">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="relative"
+                            onClick={() => router.push('/dashboard/review')}
+                            title={reviewCount > 0 ? `${reviewCount} item(s) awaiting review` : 'No pending reviews'}
+                        >
                             <Bell className="w-5 h-5 text-muted-foreground" />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
+                            {reviewCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-[1.1rem] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-primary rounded-full border-2 border-background">
+                                    {reviewCount > 9 ? '9+' : reviewCount}
+                                </span>
+                            )}
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                                     <Avatar className="h-8 w-8">
-                                        <AvatarFallback className="text-[10px]">JD</AvatarFallback>
+                                        <AvatarImage src={session.user?.image || ''} />
+                                        <AvatarFallback className="text-[10px] bg-primary/5 text-primary">{userInitials}</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>

@@ -74,7 +74,9 @@ export default function AIWriterPage() {
             const res = await generateMutation.mutateAsync({
                 topic,
                 provider,
-                modelName: modelName || undefined
+                modelName: modelName || undefined,
+                tone,
+                length: length as 'short' | 'medium' | 'long',
             });
 
             setArticleId(res.id);

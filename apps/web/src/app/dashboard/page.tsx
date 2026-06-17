@@ -9,7 +9,11 @@ import {
     Plus,
     Sparkles,
     Clock,
-    ArrowUpRight
+    ArrowUpRight,
+    Eye,
+    Heart,
+    Hand,
+    MessageSquare
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +30,26 @@ export default function DashboardPage() {
     const draftCount = articles?.filter((a) => a.status !== 'PUBLISHED' && a.status !== 'REJECTED').length ?? 0;
     const reviewCount = reviewQueue?.length ?? 0;
     const queueCount = queue?.filter((q) => q.status === 'PENDING').length ?? 0;
+
+    // Engagement totals (data already returned by adminList)
+    const totalViews = articles?.reduce((sum, a) => sum + (a.viewCount ?? 0), 0) ?? 0;
+    const totalLikes = articles?.reduce((sum, a) => sum + (a._count?.likes ?? 0), 0) ?? 0;
+    const totalClaps = articles?.reduce((sum, a) => sum + ((a as any).clapsCount ?? 0), 0) ?? 0;
+    const totalComments = articles?.reduce((sum, a) => sum + (a._count?.comments ?? 0), 0) ?? 0;
+
+    const formatNum = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
+
+    const engagementStats = [
+        { title: 'Total Views', val: totalViews, icon: Eye, color: 'text-sky-500', bg: 'bg-sky-500/10' },
+        { title: 'Likes', val: totalLikes, icon: Heart, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+        { title: 'Claps', val: totalClaps, icon: Hand, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+        { title: 'Comments', val: totalComments, icon: MessageSquare, color: 'text-violet-500', bg: 'bg-violet-500/10' },
+    ];
+
+    const topArticles = [...(articles ?? [])]
+        .filter((a) => a.status === 'PUBLISHED')
+        .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0))
+        .slice(0, 5);
 
     const stats = [
         {
@@ -98,6 +122,29 @@ export default function DashboardPage() {
                         )}
                     </Card>
                 ))}
+            </div>
+
+            {/* Engagement Grid */}
+            <div>
+                <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Engagement</h2>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    {engagementStats.map((stat, i) => (
+                        <Card key={i} className="border-border/50 transition-all hover:shadow-md">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 pt-4">
+                                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                                <div className={cn("p-2 rounded-lg", stat.bg)}>
+                                    <stat.icon className={cn("w-4 h-4", stat.color)} />
+                                </div>
+                            </CardHeader>
+                            <CardContent className="px-4 pb-4">
+                                <div className="text-2xl font-bold tabular-nums">{formatNum(stat.val)}</div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -176,6 +223,41 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Top Performing Articles */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-primary" />
+                        Top Performing Articles
+                    </CardTitle>
+                    <CardDescription>Your most viewed published content</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {topArticles.length === 0 ? (
+                        <p className="text-sm text-muted-foreground py-4">No published articles yet.</p>
+                    ) : (
+                        <div className="space-y-1">
+                            {topArticles.map((a, i) => (
+                                <Link
+                                    key={a.id}
+                                    href={`/dashboard/articles/${a.id}/edit`}
+                                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors group"
+                                >
+                                    <span className="text-sm font-bold text-muted-foreground/50 w-5 tabular-nums">{i + 1}</span>
+                                    <span className="text-sm font-medium truncate flex-1 group-hover:text-primary transition-colors">{a.title}</span>
+                                    <div className="flex items-center gap-4 text-xs text-muted-foreground shrink-0">
+                                        <span className="flex items-center gap-1 tabular-nums"><Eye className="w-3.5 h-3.5" />{formatNum(a.viewCount ?? 0)}</span>
+                                        <span className="flex items-center gap-1 tabular-nums"><Heart className="w-3.5 h-3.5" />{a._count?.likes ?? 0}</span>
+                                        <span className="flex items-center gap-1 tabular-nums"><Hand className="w-3.5 h-3.5" />{(a as any).clapsCount ?? 0}</span>
+                                    </div>
+                                    <ArrowUpRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors shrink-0" />
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

@@ -17,6 +17,11 @@ const config: Config = {
             },
         },
         extend: {
+            fontFamily: {
+                sans: ['var(--font-outfit)', 'sans-serif'],
+                display: ['var(--font-syne)', 'sans-serif'],
+                mono: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+            },
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",

@@ -1,21 +1,31 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Syne, Outfit } from 'next/font/google';
 import Providers from './providers';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
 
-const inter = Inter({
+const syne = Syne({
     subsets: ['latin'],
-    variable: '--font-inter',
+    variable: '--font-syne',
     display: 'swap',
+    weight: ['400', '500', '600', '700', '800'],
+});
+
+const outfit = Outfit({
+    subsets: ['latin'],
+    variable: '--font-outfit',
+    display: 'swap',
+    weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-    title: 'Blog Platform',
-    description: 'AI-powered blog platform for passive income',
+    title: {
+        default: 'AXIOM — Intelligence Driven Insights',
+        template: '%s | AXIOM',
+    },
+    description: 'Exploring the future through artificial intelligence. Emerging trends, deep dives, and radical ideas across AI and modern technology.',
 };
-
-import { ThemeProvider } from '@/components/theme-provider';
 
 export default function RootLayout({
     children,
@@ -24,16 +34,27 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={inter.className}>
+            <body className={`${syne.variable} ${outfit.variable} antialiased`}>
                 <ThemeProvider
                     attribute="class"
-                    defaultTheme="system"
+                    defaultTheme="dark"
                     enableSystem
                     disableTransitionOnChange
                 >
                     <Providers>
                         {children}
-                        <Toaster position="bottom-right" />
+                        <Toaster
+                            position="bottom-right"
+                            toastOptions={{
+                                style: {
+                                    background: 'hsl(240 9% 6%)',
+                                    color: 'hsl(240 5% 95%)',
+                                    border: '1px solid hsl(240 5% 11%)',
+                                    fontFamily: 'var(--font-outfit), sans-serif',
+                                    fontSize: '0.875rem',
+                                },
+                            }}
+                        />
                     </Providers>
                 </ThemeProvider>
             </body>

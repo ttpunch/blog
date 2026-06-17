@@ -6,7 +6,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
-import type { AppRouter } from '@blog/api';
+import type { AppRouter } from '@/server/root';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';

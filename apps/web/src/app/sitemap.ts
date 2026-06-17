@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { prisma, ArticleStatus } from '@blog/db';
+import { prisma, ArticleStatus } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 

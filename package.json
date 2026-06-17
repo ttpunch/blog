@@ -2,16 +2,17 @@
   "name": "blog-platform",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "db:generate": "turbo db:generate",
-    "db:push": "turbo db:push",
-    "db:studio": "pnpm --filter @blog/db studio",
-    "postinstall": "turbo db:generate"
+    "dev": "pnpm --filter @blog/web dev",
+    "build": "pnpm --filter @blog/web build",
+    "start": "pnpm --filter @blog/web start",
+    "lint": "pnpm --filter @blog/web lint",
+    "db:generate": "pnpm --filter @blog/web db:generate",
+    "db:push": "pnpm --filter @blog/web db:push",
+    "db:migrate": "pnpm --filter @blog/web db:migrate",
+    "db:studio": "pnpm --filter @blog/web db:studio",
+    "db:seed": "pnpm --filter @blog/web db:seed"
   },
   "devDependencies": {
-    "turbo": "^2.3.0",
     "typescript": "^5.3.0"
   },
   "packageManager": "pnpm@9.0.0",

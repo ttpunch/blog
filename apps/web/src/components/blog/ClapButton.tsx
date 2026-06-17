@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { trpc } from "@/lib/trpc"; // Fixed import
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 interface ClapButtonProps {
     articleId: string;
@@ -18,6 +21,9 @@ export function ClapButton({ articleId, initialTotalClaps = 0, initialUserClaps 
     const [userClaps, setUserClaps] = useState(initialUserClaps);
     const [pendingClaps, setPendingClaps] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+
+    const { data: session } = useSession();
+    const router = useRouter();
 
     // TRPC
     const utils = trpc.useContext();
@@ -48,6 +54,11 @@ export function ClapButton({ articleId, initialTotalClaps = 0, initialUserClaps 
     }, [pendingClaps, articleId, submitClap]);
 
     const handleClap = () => {
+        if (!session) {
+            toast.error('Please log in to clap for this article');
+            router.push('/login');
+            return;
+        }
         if (userClaps >= 50) return; // Max limit
 
         setTotalClaps(prev => prev + 1);
